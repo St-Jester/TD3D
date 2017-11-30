@@ -5,11 +5,16 @@ public class BuildManager : MonoBehaviour {
     [HideInInspector]
     public static BuildManager BM_instance;
 
-    public Vector3 PositionOffset;
+    
     public GameObject standartTurret;
     public GameObject missileLauncher;
+    public GameObject buildEffect;
+    private TurretBlueprint turretToBuild;
 
-    private GameObject turretToBuild;
+    public bool CanBuild { get { return turretToBuild != null; } }
+    public bool HasMoney { get { return PlayerStats.Money >= BM_instance.turretToBuild.price; } }
+    
+    private Node selectedNode;
 
     private void Awake()
     {
@@ -19,18 +24,42 @@ public class BuildManager : MonoBehaviour {
             return;
         }
         BM_instance = this;
-        
-        
     }
 
 
-    public void SetTurretToBuild(GameObject _tur)
-    {
-        turretToBuild = _tur;
-    }
 
-    public GameObject GetTurretToBuild()
+
+    public TurretBlueprint GetTurretToBuild()
     {
         return turretToBuild;
     }
+
+    public void SelectNode(Node node)
+    {
+
+        if(selectedNode == node)
+        {
+            DeselectNode();
+            return;
+        }
+        selectedNode = node;
+        turretToBuild = null;
+
+        //nodeUI.SetTarget(node);
+    }
+   
+    public void SelectTurret(TurretBlueprint t)
+    {
+        turretToBuild = t;
+        DeselectNode();
+    }
+
+    public void DeselectNode()
+    {
+        selectedNode = null;
+        //nodeUI.Hide();
+    }
+
+    
+
 }

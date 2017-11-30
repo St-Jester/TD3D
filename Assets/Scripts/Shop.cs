@@ -4,18 +4,21 @@ using UnityEngine;
 
 public class Shop : MonoBehaviour {
 
+    public TurretBlueprint standart;
+    public TurretBlueprint missileLauncher;
 
     BuildManager bm;
-	public void PurchasesStandartTurret()
+
+	public void SelectStandartTurret()
     {
         Debug.Log("Standart Turret purchase");
-        bm.SetTurretToBuild(bm.standartTurret);
+        bm.SelectTurret(standart);
 
     }
-    public void PurchasesMissileLauncher()
+    public void SelectMissileLauncher()
     {
         Debug.Log("MissileLauncher purchase");
-        bm.SetTurretToBuild(bm.missileLauncher);
+        bm.SelectTurret(missileLauncher);
 
     }
 

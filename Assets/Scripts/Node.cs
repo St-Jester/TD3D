@@ -7,8 +7,15 @@ using UnityEngine.EventSystems;
 public class Node : MonoBehaviour {
 
     public Color hoverColor;
+    public Color noMoney;
 
+    public Vector3 positionOffset;
+
+    [HideInInspector]
     private GameObject turret;
+
+    [HideInInspector]
+    public TurretBlueprint Tblueprint;
 
     private Color startColor;
     private Renderer rend;
@@ -19,7 +26,6 @@ public class Node : MonoBehaviour {
         rend = GetComponent<Renderer>();
         startColor = rend.material.color;
         bm = BuildManager.BM_instance;
-
     }
 
     private void OnMouseDown()
@@ -28,32 +34,80 @@ public class Node : MonoBehaviour {
         {
             return;
         }
-        if (bm.GetTurretToBuild() == null)
+
+        if (turret != null)
+        {
+            bm.SelectNode(this);
+            //Debug.Log("Already Claimed!");
+            return;
+        }
+
+        if (!bm.CanBuild)
         {
             return;
         }
 
-        if(turret != null)
+
+        BuildTurret(bm.GetTurretToBuild());
+        //build turret in a this script
+        
+        
+    }
+
+    public void BuildTurret(TurretBlueprint blueprint)
+    {
+        if (PlayerStats.Money < blueprint.price)
         {
-            Debug.Log("Already Claimed!");
+            Debug.Log("Not enough money");
             return;
         }
-        GameObject turretToBuild = BuildManager.BM_instance.GetTurretToBuild();
-        turret = Instantiate(turretToBuild, transform.position+ BuildManager.BM_instance.PositionOffset, transform.rotation);
-        
+
+        PlayerStats.Money -= blueprint.price;
+
+         
+        GameObject _turret = Instantiate(blueprint.turret, GetBuildPosition(), Quaternion.identity);
+        turret = _turret;
+
+        Tblueprint = blueprint;
+
+        GameObject effect = (GameObject)Instantiate(bm.buildEffect, GetBuildPosition(), Quaternion.identity);
+        Destroy(effect, 5f);
+
+        Debug.Log("Turret Built");
+    }
+
+    public Vector3 GetBuildPosition()
+    {
+        return transform.position + positionOffset;
     }
 
     private void OnMouseEnter()
     {
         if(EventSystem.current.IsPointerOverGameObject())
         {
+            Debug.Log("overlap");
+
             return;
         }
-        if (bm.GetTurretToBuild() == null)
+        if (!bm.CanBuild)
         {
+            Debug.Log("cantbuild");
+
             return;
         }
-        rend.material.color = hoverColor;
+
+        if(bm.HasMoney)
+        {
+            Debug.Log("Has money");
+            rend.material.color = hoverColor;
+
+        }
+        else
+        {
+            Debug.Log("no money");
+
+            rend.material.color = noMoney;
+        }
 
     }
     private void OnMouseExit()
