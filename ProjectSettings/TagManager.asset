@@ -14,7 +14,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - MenuParticles
   - 
   - 
   - 
@@ -41,4 +41,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: onCanvas
+    uniqueID: 3884765641
     locked: 0
